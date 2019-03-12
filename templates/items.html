@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
+
+</head>
+<body>
+<div class="recipe-detail-page">
+<h2>{{items.name}}</h2>
+
+<div>
+    <p>{{items.description}}</p>
+    <button class="edit-button" type="button"> <a href='{{url_for('editItems',category_id = items.id, items_id = item.id )}}'>Edit</a></button>
+    <button class="delete-button" type="button"> <a href='{{url_for('deleteItems',category_id = items.id, items_id = item.id )}}'>Delete</a></button>
+
+</div>
+    </div>
+</body>
+</html>
