@@ -1,80 +1,57 @@
+{% extends "main.html" %}
+<!DOCTYPE html>
 <html>
 <head>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
-
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
 
-
-<nav>
- <div class="nav-grid-container">
-       <div class="grid-item">
-    <h1>Catalog App</h1></div>
-             <div class="nav-grid-item">
-      <button class="login-button" type="button">
-<a href='{{url_for('gdisconnect')}}'>Logout</a>
+<header>
+ <h1>Catalog App</h1>
+ <p align="right">
+ <button class="login-button" type="button" class="btn btn-primary btn-lg">
+		<a href={{url_for('showLogin')}}>Login</a>
             </button>
-                  </div>
-        </div>
-</nav>
+</P>
+</header>
 
-<div class="grid-container">
-   <div class="grid-item">
+<section>
+<div id = "wrap">
+<div class ="left">
 <h2>Categories</h2>
 
-{% for i in categories %}
+{% for i in showcategory %}
+
 <div>
-  <p> <a href='{{url_for('categoryList',category_id = i.id )}}'>{{i.name}}</a></p>
+  <p> <a href={{url_for('showCategoryitems',name = i.name )}}>{{i.name}}</a></p>
+  
+</div>
+{% endfor %}
+
+</div>
+<!--<div class="vr">&nbsp;</div>-->
+
+<div class = "right">
+<div class="row padding-top padding-bottom">
+		<div class="col-md-1"></div>
+		<div class="col-md-10 padding-none">
+			<a href="{{url_for('newItem')}}">
+				<button class="btn btn-default" id="new-item">
+					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Add item
+				</button>
+			</a>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+<h2>Latest Items</h2>
+	{% for i in showlatestitems %}
+<div>
+  <p> {{i.title}}  <font color="gray"><small><i>({{i.name}})</i></small></font></p>
+  
 </div>
 {% endfor %}
 </div>
-   <div class="grid-item">
-<h2>Latest items</h2>
+</section>
 
-{% for i in items %}
-<div>
-    <p><a href='{{url_for('showitems', category_id = i.category_id, items_id = i.id )}}'>{{i.title}}</a></p>
-</div>
-{% endfor %}
-</div>
-    </div>
-
-{% else %}
-
-<nav>
- <div class="nav-grid-container">
-       <div class="grid-item">
-    <h1>Catalog App</h1></div>
-             <div class="nav-grid-item">
-      <button class="login-button" type="button" class="btn btn-primary btn-lg">
-<a href='{{url_for('showLogin')}}'>Login</a>
-            </button>
-                  </div>
-        </div>
-</nav>
-
-<div class="grid-container">
-   <div class="grid-item">
-<h2>Select category</h2>
-
-{% for i in categories %}
-<div>
-  <p> <a href='{{url_for('categoryList',category_id = i.id )}}'>{{i.name}}</a></p>
-</div>
-{% endfor %}
-</div>
-   <div class="grid-item">
-<h2>Latest items</h2>
-
-{% for i in items %}
-<div>
-    <p><a href='{{url_for('showitems', category_id = i.id, items_id = i.id )}}'>{{i.name}}</a></p>
-</div>
-{% endfor %}
-</div>
-    </div>
-
-{% endif %}
 </body>
 </html>

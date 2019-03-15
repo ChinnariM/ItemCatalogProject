@@ -9,36 +9,37 @@
  <h1>Catalog App</h1>
  <p align="right">
  <button class="login-button" type="button" class="btn btn-primary btn-lg">
-		<a href=#>Login</a>
+		<a href={{url_for('showLogin')}}>Login</a>
             </button>
-</p>
+</P>
 </header>
 
+<section>
 <div id = "wrap">
 <div class ="left">
 <h2>Categories</h2>
 
-{% for i in categoryitems %}
+{% for i in showcategory %}
 
 <div>
-  <p> {{i.name}}</p>
+  <p> <a href={{url_for('showCategoryitems',name = i.name )}}>{{i.name}}</a></p>
+  
 </div>
 {% endfor %}
-</div>
 
+</div>
+<!--<div class="vr">&nbsp;</div>-->
 
 <div class = "right">
-<h2>{{category.name}} Items ({{showitemCount}} items)</h2>
-	
-<div width= "1000px;">
-{% for i in showListcategoryitems %}
-<p> <a href={{url_for('showitemdescrpition',name=i.name,title = i.title )}}>{{i.title}}</a></p>
- 
- 
-
+<h2>Latest Items</h2>
+	{% for i in showlatestitems %}
+<div>
+  <p> {{i.title}}  <font color="gray"><small><i>({{i.name}})</i></small></font></p>
+  
 </div>
 {% endfor %}
 </div>
+</section>
 
 </body>
 </html>

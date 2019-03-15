@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
-from sqlalchemy import create_engine, asc
+from flask import Flask, render_template,request, redirect, jsonify, url_for, flash
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Category, Base, Items , User
+from database_setup import Base, Category, Items
 from flask import session as login_session
-import random
+import random, string
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -11,15 +11,15 @@ import json
 from flask import make_response
 import requests
 
+
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
-APPLICATION_NAME = "Catalog App..."
+APPLICATION_NAME = "CATALOG APP."
 
 
-# Connect to Database and create database session
-engine = create_engine('sqlite:///catalog.db')
+engine = create_engine('sqlite:///catalog.db',connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -33,9 +33,9 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-    # return "The current session state is %s" % login_session['state']
+    #return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
-
+	
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -118,10 +118,8 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print ("done!")
     return output
-
-    # DISCONNECT - Revoke a current user's token and reset their login_session
-
-
+	
+# DISCONNECT - Revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session['access_token']
@@ -151,102 +149,106 @@ def gdisconnect():
 	
     	response = make_response(json.dumps('Failed to revoke token for given user.', 400))
     	response.headers['Content-Type'] = 'application/json'
-    	return response
-
-# JSON APIs to view catalog Information
-@app.route('/category/<int:category_id>/JSON')
-def categoryitemsJSON(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
-    items = session.query(Items).filter_by(
-        category_id=category_id).all()
-    return jsonify(Items=[i.serialize for i in items])
-
-# Show Catalog
+    	
+	
+	
+# Task 1: Display all the Categories and the latest added items.
 @app.route('/')
-@app.route('/catalog/')
-def showCategories():
-    categories = session.query(Category).all()
-    items = session.query(Items).order_by(items.id.desc())
-    #is_logged_in = 'username' not in  login session
-    return render_template('catalog.html', catagories=catagories, items=items,is_logged_in=is_logged_in)
-
-
-# Show Catagory Page
-@app.route('/<int:category_id>/')
-@app.route('/catalog/<int:category_id>')
-def showcategoryList(category_id):
-    category = session.query(Category).filter_by(id=category_id).one()
-    items = session.query(Items).filter_by(
-        category_id=category_id).all()
-    return render_template('category.html', items=items, category=category,category_id=category_id)
-
-# Show items page
-
-@app.route('/catalog/<int:catagory_id>/<int:items_id>')
-def showItems(category_id, items_id):
-    #Show items per category
-    showItems = session.query(Items).filter_by(id=items_id).one()
-    return render_template('items.html',
-                           category_id=category_id,
-                           items_id=items_id,
-                           )	
-
-# Create a new  item
-@app.route('/catalog/<int:category_id>/new/', methods=['GET', 'POST'])
-def newItem(category_id):
+@app.route('/catalog')
+def showCatalog():
+    showcategory=session.query(Category).all()
+    showlatestitems=session.query(Items.title,Category.name).join(Category).order_by(Items.id.desc())
+    #print(showlatestitems)
     if 'username' not in login_session:
-        return redirect('/login')
-    
+     return render_template('publiccatalog.html',showcategory=showcategory ,showlatestitems =showlatestitems)
+    else:
+        return render_template('catalog.html',showcategory=showcategory ,showlatestitems =showlatestitems)
+
+# Task 2: once user clicks on any Category it will system will list the items for that Category	
+@app.route('/<string:name>/itemsc')
+@app.route('/catalog/<string:name>/items')
+def showCategoryitems(name):
+    categoryitems=session.query(Category).all()
+    category=session.query(Category).filter(name==Category.name).one()
+    showitemCount=session.query(Items.id).join(Category).filter(name==Category.name).count()
+    showListcategoryitems=session.query(Items.title,Category.name).join(Category).filter(name==Category.name)
+    print(showListcategoryitems)
+    print(showitemCount)
+    return render_template('category.html',showitemCount=showitemCount,categoryitems=categoryitems,category=category, showListcategoryitems=showListcategoryitems)
+
+# Task 1: User clicks on any listed item form the category search the user will redirect to the Items description page
+@app.route('/<string:name>/<string:title>')
+def showitemdescrpition(name,title):
+    #categoryitems=session.query(Category).all()
+    category=session.query(Category).filter(name==Category.name).one()
+    itemtitle=session.query(Items).filter(title==Items.title).one()
+    #itemdescription=session.query(Items.description).filter(title==Items.title)
+    if 'username' not in login_session:
+     return render_template('publicitemsdesc.html',itemtitle=itemtitle,category=category)
+    else:
+     return render_template('itemsdesc.html',itemtitle=itemtitle,category=category)	
+
+	 
+# Task 4: Create route for newItem function here	
+@app.route('/catalog/items/new/', methods=['GET', 'POST'])
+def newItem():
     if request.method == 'POST':
-        newItem = Items(title=request.form['title'], description=request.form[
-                           'description'],  category_id=category_id)
+        newItem = Items(
+         title=request.form['title'],description=request.form['description'],category_id = request.form['categories_name'])
+        print(newItem)
         session.add(newItem)
         session.commit()
-        flash('New  %s Item Successfully Created' % (newItem.name))
-        return redirect(url_for('showItems', category_id=category_id))
+        flash('New  %s Item Successfully Created' % (newItem.title))
+        return redirect(url_for('showCatalog'))
     else:
-        return render_template('newitem.html', category_id=category_id, item=newItem)
+     return render_template('newitem.html')
 
-# Edit a  item
-
-
-@app.route('/catalog/<int:category_id>/<int:items_id>/edit', methods=['GET', 'POST'])
-def editItem(category_id, items_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    editedItem = session.query(Items).filter_by(id=items_id).one()
-    category = session.query(Category).filter_by(id=category_id).one()
+# Task 5: Create route for EditItem function here	
+@app.route('/catalog/<string:title>/edit/', methods=['GET', 'POST'])
+def editItem(title):
+    editedItem = session.query(Items).filter(title==Items.title)
+    print(editedItem)
     if request.method == 'POST':
-        if request.form['title']:
+     if request.form['title']:
             editedItem.title = request.form['title']
-        if request.form['description']:
+     if request.form['description']:
             editedItem.description = request.form['description']
-        if request.form['catagory']:
-            editedItem.catagory = request.form['catagory']
-        session.add(editedItem)
-        session.commit()
-        flash(' Item Successfully Edited')
-        return redirect(url_for('showItems', category_id=category_id))
+     if request.form['categories_name']:
+            editedItem.catagory_id = request.form['categories_name']
+     session.add(editedItem)
+     session.commit()
+     flash(' Item Successfully Edited')
+     return redirect(url_for('showCatalog'))
     else:
-        return render_template('edititem.html', category_id=category_id, items_id=items_id, item=editedItem)
-
-
-# Delete a menu item
-@app.route('/catalog/<int:category_id>/<int:items_id>/delete', methods=['GET', 'POST'])
-def deleteItem(category_id, items_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
-    itemToDelete = session.query(Items).filter_by(id=items_id).one()
+     return render_template('edititem.html',title = title,item=editedItem)
+	 
+# Task 6: Create route for DeleteItem function here
+@app.route('/catalog/<string:title>/delete/', methods=['GET', 'POST'])
+def deleteItem(title):
+    itemToDelete = session.query(Items).filter(title==Items.title)
+    print(itemToDelete)
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
         flash(' Item Successfully Deleted')
-        return redirect(url_for('showItems', category_id=category_id))
+        return redirect(url_for('showCatalog'))
     else:
-        return render_template('deleteItem.html', item=itemToDelete)
-
-
+        return render_template('deleteItem.html', title = title,item=itemToDelete)
+		
+		
+		
+		
+#task 7 : Creating Json End point 
+@app.route('/catalog.json',methods = ['GET','POST'])
+def all_catalogs():
+  if request.method == 'GET':
+   #categories = session.query(Category.id,Category.name,Items.category_id,Items.id,Items.title,Items.description).all()
+   item = session.query(Items).order_by(Items.id.desc())
+   return jsonify(catalog = [i.serialize for i in item])						
+ 
+  
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
-    app.run(host='127.0.0.1', port=8080,debug = True)
+
+    app.secret_key = 'super secret key'
+    app.debug = True
+    app.run(host='0.0.0.0', port=5000)

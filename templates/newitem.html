@@ -1,20 +1,19 @@
 <html>
 <head>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
-
+   
 </head>
 <body>
 <div class="new-item-page">
 <h1>Add Your Item</h1>
-<form action="{{url_for('newitem',category_id=category_id, user_id=user_id)}}" method='POST'>
+<form action="{{url_for('newItem')}}" method='POST'>
     <p>Title:</p>
     <input class="add-item-title" type='text' size='30' name='title'>
     <p>Description:</p>
     <textarea class="add-item-description" name="description" cols="40" rows="5"></textarea>
     <p>Category</p>
-    <select name="categories_id">
-        <option value=1>Soccer</option>
+    <select name="categories_name">
+        <option value=1 selected="selected">Soccer</option>
         <option value=2>Basket Ball</option>
 		<option value=3>Base Ball</option>
 		<option value=4>Firsbee</option>
@@ -23,7 +22,7 @@
     </select>
     <button type="submit" value="Create">Create</button>
 </form>
-<button class="delete-button" type="button"><a href='{{url_for('categoryList',category_id = category_id)}}'>Cancel</a></button>
+<button class="delete-button" type="button"><a href='#'>Cancel</a></button>
 </div>
 </body>
 </html>
