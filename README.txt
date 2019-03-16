@@ -13,6 +13,6 @@ then run it as a python lotsfitems.py
 it should insert data to the Catagory and Items tables
 
 3# now create the webservers to call the data in the UI
-4# now run the application.py 
+4# now run the application.py once it starts user can interact with the application with localhost:5000 URL.
 
 
