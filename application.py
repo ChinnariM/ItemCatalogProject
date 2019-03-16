@@ -165,7 +165,7 @@ def showCatalog():
         return render_template('catalog.html',showcategory=showcategory ,showlatestitems =showlatestitems)
 
 # Task 2: once user clicks on any Category it will system will list the items for that Category	
-@app.route('/<string:name>/itemsc')
+@app.route('/<string:name>/items')
 @app.route('/catalog/<string:name>/items')
 def showCategoryitems(name):
     categoryitems=session.query(Category).all()
@@ -176,7 +176,7 @@ def showCategoryitems(name):
     print(showitemCount)
     return render_template('category.html',showitemCount=showitemCount,categoryitems=categoryitems,category=category, showListcategoryitems=showListcategoryitems)
 
-# Task 1: User clicks on any listed item form the category search the user will redirect to the Items description page
+# Task 3: User clicks on any listed item form the category search the user will redirect to the Items description page
 @app.route('/<string:name>/<string:title>')
 def showitemdescrpition(name,title):
     #categoryitems=session.query(Category).all()
@@ -245,11 +245,14 @@ def deleteItem(title):
 @app.route('/catalog.json',methods = ['GET','POST'])
 def all_catalogs():
   if request.method == 'GET':
-   #categories = session.query(Category.id,Category.name,Items.category_id,Items.id,Items.title,Items.description).all()
-   item = session.query(Category,Items).join(Items).filter(Items.category_id ==Category.id).all()
-  
-   print(item)
-   return jsonify(catalog = [i.serialize  for i in item])						
+    catalog = session.query(Category).all()
+    category_list = [c.serialize for c in catalog]
+    for c in range(len(category_list)):
+        items = session.query(Items).filter_by(category_id=category_list[c]["id"])
+        items_list = [i.serialize for i in items]
+        if items_list:
+            category_list[c]["categories"] = items_list
+    return jsonify(catalog=category_list)						
  
   
 if __name__ == '__main__':
