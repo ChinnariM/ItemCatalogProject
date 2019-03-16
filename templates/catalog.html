@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +10,7 @@
  <h1>Catalog App</h1>
  <p align="right">
  <button class="login-button" type="button" class="btn btn-primary btn-lg">
-		<a href={{url_for('showLogin')}}>Login</a>
+		<a href="{{url_for('gdisconnect')}}">Logout</a>
             </button>
 </P>
 </header>
@@ -32,17 +32,10 @@
 <!--<div class="vr">&nbsp;</div>-->
 
 <div class = "right">
-<div class="row padding-top padding-bottom">
-		<div class="col-md-1"></div>
-		<div class="col-md-10 padding-none">
-			<a href="{{url_for('newItem')}}">
-				<button class="btn btn-default" id="new-item">
-					<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Add item
-				</button>
-			</a>
-		</div>
-		<div class="col-md-1"></div>
-	</div>
+
+	{% if 'username' in session %}
+					<a href="{{url_for('newItem')}}", class="button u list__add">Add Item</a>
+				{% endif %}
 <h2>Latest Items</h2>
 	{% for i in showlatestitems %}
 <div>

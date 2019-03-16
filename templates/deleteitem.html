@@ -11,10 +11,8 @@
  </header>
  <form action="{{url_for('deleteItem',title = title)}}" method = 'post'>
     <h3> Are you sure you want to delete ? </h3>
-	<button type="submit"value="Delete">
-	<span class="glyphicon glyphicon-trash" ></span>Submit</button>
-	<a href = "{{url_for('showCatalog')}}">
-	<span class="glyphicon glyphicon-remove" ></span> Cancel</button>
-	</a>
+    <button type="submit" value="Submit">Submit</button>
+	<button type="submit" value="Cancle"><a href = "{{url_for('showCatalog')}}">Cancel</button>
+</a>
  </form>
 </div>

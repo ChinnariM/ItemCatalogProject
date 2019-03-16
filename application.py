@@ -206,6 +206,9 @@ def newItem():
 # Task 5: Create route for EditItem function here	
 @app.route('/catalog/<string:title>/edit/', methods=['GET', 'POST'])
 def editItem(title):
+    if 'username' not in login_session:
+        return redirect('/login')
+    #category=session.query(Category).filter(name==Category.name).one()	
     editedItem = session.query(Items).filter(title==Items.title)
     print(editedItem)
     if request.method == 'POST':
@@ -225,7 +228,7 @@ def editItem(title):
 # Task 6: Create route for DeleteItem function here
 @app.route('/catalog/<string:title>/delete/', methods=['GET', 'POST'])
 def deleteItem(title):
-    itemToDelete = session.query(Items).filter(title==Items.title)
+    itemToDelete = session.query(Items).filter(title==Items.title).one()
     print(itemToDelete)
     if request.method == 'POST':
         session.delete(itemToDelete)
@@ -243,8 +246,10 @@ def deleteItem(title):
 def all_catalogs():
   if request.method == 'GET':
    #categories = session.query(Category.id,Category.name,Items.category_id,Items.id,Items.title,Items.description).all()
-   item = session.query(Items).order_by(Items.id.desc())
-   return jsonify(catalog = [i.serialize for i in item])						
+   item = session.query(Category,Items).join(Items).filter(Items.category_id ==Category.id).all()
+  
+   print(item)
+   return jsonify(catalog = [i.serialize  for i in item])						
  
   
 if __name__ == '__main__':

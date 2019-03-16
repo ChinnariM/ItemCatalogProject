@@ -8,7 +8,7 @@
  <h1>Catalog App</h1>
  <p align="right">
   <button class="login-button" type="button" class="btn btn-primary btn-lg">
-		<a href=#>Login</a>
+		<a href="{{url_for('gdisconnect')}}">Logout</a>
             </button>
 </P>
 </header>
@@ -20,11 +20,11 @@
 <div class="row padding-top padding-bottom">
 		<div class="col-md-1"></div>
 		<div class="col-md-10 padding-none">
-			<a href="{{url_for('editItem',title = title)}}">
+			<a href="{{url_for('editItem',title = itemtitle.title)}}">
 				<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Edit
 				</button>
 			</a>
-			<a href="{{url_for('deleteItem',title = title)}}">
+			<a href="{{url_for('deleteItem',title = itemtitle.title)}}">
 				<span class="glyphicon glyphicon-cutlery" aria-hidden="true"></span>Delete
 				</button>
 			</a>

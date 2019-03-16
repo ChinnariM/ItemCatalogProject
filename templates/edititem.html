@@ -13,9 +13,9 @@
 
 <form action="{{url_for('editItem',title = title)}}" method='POST'>
     <p>Title:</p>
-    <input class="edit-item-title" type='text' size='30' name='title' value="{{item.title }}">
+    <input class="edit-item-title" type='text' size='30' name='title' value="{{title}}">
     <p>Description:</p>
-    <textarea class="edit-item-description" name="description" cols="40" rows="5" >{{item.description}}</textarea>
+    <textarea class="edit-item-description" name="description" cols="40" rows="5" >{{description}}</textarea>
     <p>Category:</p>
     <select name="categories_name">
         <option value=1>Soccer</option>
@@ -26,6 +26,7 @@
 		<option value=6>Rock Climbing</option>
     </select>
     <button type="submit" value="Create">Submit</button>
+	<button type="submit" value="Cancle"><a href="{{url_for('showCatalog')}}">Cancel</a></button>
 </form>
 
 </div>

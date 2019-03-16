@@ -4,8 +4,10 @@
    
 </head>
 <body>
+<header>
+ <h1>Add new Item</h1>
+ </header>
 <div class="new-item-page">
-<h1>Add Your Item</h1>
 <form action="{{url_for('newItem')}}" method='POST'>
     <p>Title:</p>
     <input class="add-item-title" type='text' size='30' name='title'>
@@ -21,8 +23,9 @@
 		<option value=6>Rock Climbing</option>
     </select>
     <button type="submit" value="Create">Create</button>
+	<button type="submit" value="Cancle"><a href="{{url_for('showCatalog')}}">Cancel</a></button>
 </form>
-<button class="delete-button" type="button"><a href='#'>Cancel</a></button>
+
 </div>
 </body>
 </html>
