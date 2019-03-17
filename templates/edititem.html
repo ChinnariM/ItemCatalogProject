@@ -11,13 +11,14 @@
  </header>
 <div class="edit-item-page">
 
-<form action="{{url_for('editItem',title = title)}}" method='POST'>
+<form action="{{url_for('editItem',title = title, category_id = category_id)}}" method='POST'>
     <p>Title:</p>
-    <input class="edit-item-title" type='text' size='30' name='title' value="{{title}}">
+    <input class="edit-item-title" type='text' size='30' name='title' placeholder="{{title}}">
     <p>Description:</p>
-    <textarea class="edit-item-description" name="description" cols="40" rows="5" >{{description}}</textarea>
-    <p>Category:</p>
-    <select name="categories_name">
+    <textarea class="edit-item-description" name="description" cols="40" rows="5" placeholder="{{item.description}}">{{description}}</textarea>
+  <p>Category:</p>
+    <select name="categories_name"  >
+		<option value=0><option>
         <option value=1>Soccer</option>
         <option value=2>Basket Ball</option>
 		<option value=3>Base Ball</option>
@@ -25,7 +26,7 @@
 		<option value=5>Snow Boarding</option>
 		<option value=6>Rock Climbing</option>
     </select>
-    <button type="submit" value="Create">Submit</button>
+    <button type="submit" value="Create"><a href="{{url_for('showCatalog')}}">Submit</button>
 	<button type="submit" value="Cancle"><a href="{{url_for('showCatalog')}}">Cancel</a></button>
 </form>
 
